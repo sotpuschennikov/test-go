@@ -10,8 +10,6 @@ jobs:
     permissions:
       issues: write
       pull-requests: write
-      contents: write
-      repository-projects: write
     runs-on: ubuntu-latest
     steps:
       - name: Get PR ref
