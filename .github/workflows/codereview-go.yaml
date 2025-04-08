@@ -75,20 +75,22 @@ jobs:
           for file in $(echo $ALL_CHANGED_FILES) ; do
               echo "Review file ${file}"
               echo "\nReview file ${file}\n" >> ./summary.txt
-              export PROMPT_VAR=$(cat "${file}")
-              python3 ${PATH_TO_AI_CODEREVIEW_SCRIPT} \
-                --base-url "${AI_API_BASE_URL}" \
-                --model "${AI_API_MODEL}"\
-                --api-key "${AI_API_TOKEN}" \
-                --max-tokens "${MAX_TOKENS}" \
-                --temperature "${TEMPERATURE}" \
-                --context "" \
-                --lang "${LANG}" \
-                --template-file "${PATH_TO_JINJA_TEMPLATE_FILE}"
+          #   export PROMPT_VAR=$(cat "${file}")
+          #    python3 ${PATH_TO_AI_CODEREVIEW_SCRIPT} \
+          #      --base-url "${AI_API_BASE_URL}" \
+          #      --model "${AI_API_MODEL}"\
+          #      --api-key "${AI_API_TOKEN}" \
+          #      --max-tokens "${MAX_TOKENS}" \
+          #      --temperature "${TEMPERATURE}" \
+          #      --context "" \
+          #      --lang "${LANG}" \
+          #      --template-file "${PATH_TO_JINJA_TEMPLATE_FILE}"
           done
           JOB_URL=$(gh run --repo ${{ github.repository }} view ${{ github.run_id }} --json jobs --jq '.jobs[] | select(.name == "${{ github.job }}") | .url, (.steps[] | select(.name == "Run ai-codereview script") | "#step:\(.number):1")' | tr -d "\n")
           echo "See the code review [here]($JOB_URL)"  >> ./summary.txt
           echo "review_result=$(cat ./summary.txt | tr '\n' ' ')" >> $GITHUB_OUTPUT
+          comments=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/sotpuschennikov/test-go/issues/comments)
+          echo $comments
       - name: Saved cached virtualenv
         uses: actions/cache/save@d4323d4df104b026a6aa633fdb11d772146be0bf #v4
         with:
