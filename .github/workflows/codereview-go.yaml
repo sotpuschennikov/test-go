@@ -89,8 +89,8 @@ jobs:
           JOB_URL=$(gh run --repo ${{ github.repository }} view ${{ github.run_id }} --json jobs --jq '.jobs[] | select(.name == "${{ github.job }}") | .url, (.steps[] | select(.name == "Run ai-codereview script") | "#step:\(.number):1")' | tr -d "\n")
           echo "See the code review [here]($JOB_URL)"  >> ./summary.txt
           echo "review_result=$(cat ./summary.txt | tr '\n' ' ')" >> $GITHUB_OUTPUT
-          comments=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" /repos/sotpuschennikov/test-go/issues/comments)
-          echo $comments
+          echo "comment_id=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" ${{ github.repository }}/issues/comments | jq '.[] | select(.body | contains("See the code review")) | .id' | tail -1)" >> $GITHUB_OUTPUT
+          echo $comment_id
       - name: Saved cached virtualenv
         uses: actions/cache/save@d4323d4df104b026a6aa633fdb11d772146be0bf #v4
         with:
@@ -99,9 +99,18 @@ jobs:
       - uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea #v7
         with:
           script: |
-              github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: "${{ steps.codereview.outputs.review_result }}"
-              })
+              if (${{ steps.codereview.outputs.comment_id }}) {
+                github.rest.issues.createComment({
+                  issue_number: context.issue.number,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: "${{ steps.codereview.outputs.comment_id }}",
+                  body: "${{ steps.codereview.outputs.review_result }}"
+              } else {
+                github.rest.issues.createComment({
+                  issue_number: context.issue.number,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  body: "${{ steps.codereview.outputs.review_result }}"
+                })
+              }
