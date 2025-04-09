@@ -99,20 +99,10 @@ jobs:
       - uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea #v7
         with:
           script: |
-            if (botComment) {
-              github.rest.issues.updateComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: botComment.id,
-                body: "${{ steps.codereview.outputs.review_result }}"
-              })
-            } else {
               github.rest.issues.createComment({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 body: "${{ steps.codereview.outputs.review_result }}"
               })
-            }
 
