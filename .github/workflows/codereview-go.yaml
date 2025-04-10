@@ -99,18 +99,18 @@ jobs:
       - uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea #v7
         with:
           script: |
-              if (${{ steps.codereview.outputs.comment_id }}) {
-                github.rest.issues.createComment({
-                  issue_number: context.issue.number,
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  comment_id: "${{ steps.codereview.outputs.comment_id }}",
-                  body: "${{ steps.codereview.outputs.review_result }}"
-              } else {
-                github.rest.issues.createComment({
-                  issue_number: context.issue.number,
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  body: "${{ steps.codereview.outputs.review_result }}"
-                })
-              }
+            if (${{ steps.codereview.outputs.comment_id }}) {
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: "${{ steps.codereview.outputs.comment_id }}",
+                body: "${{ steps.codereview.outputs.review_result }}"
+            } else {
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: "${{ steps.codereview.outputs.review_result }}"
+              })
+            }
