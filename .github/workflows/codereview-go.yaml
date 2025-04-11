@@ -101,7 +101,7 @@ jobs:
       - name: Send message to PR with summary
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea #v7
         env: 
-          COMMENT_ID: ${{ steps.codereview.outputs.comment_id | ''}}
+          COMMENT_ID: ${{ steps.codereview.outputs.comment_id || ''}}
         with:
           script: |
             if (${COMMENT_ID} != '') {
