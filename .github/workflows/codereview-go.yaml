@@ -98,8 +98,9 @@ jobs:
         uses: actions/cache/save@d4323d4df104b026a6aa633fdb11d772146be0bf #v4
         with:
           key: venv-${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-${{ hashFiles('ai-ci-scripts/ai-codereview/requirements.txt') }}
-          path: .venv    
-      - uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea #v7
+          path: .venv
+      - name: Send message to PR with summary
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea #v7
         env:
           COMMENT_ID: ${{ steps.codereview.outputs.comment_id | ''}}
         with:
